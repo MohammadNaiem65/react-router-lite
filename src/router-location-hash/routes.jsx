@@ -3,6 +3,22 @@ import Error from "./error";
 import useRouteContext from "./hooks/useRouteContext";
 import Route from "./route";
 
+/**
+ * A component that renders the appropriate route based on the current path.
+ * @param {{ children: React.ReactNode }} props
+ * @prop {ReactNode} children The children routes. Each child should be a `Route`
+ * component.
+ *
+ * @example
+ * <Routes>
+ *   <Route path="/">
+ *     <Home />
+ *   </Route>
+ *   <Route path="/about">
+ *     <About />
+ *   </Route>
+ * </Routes>
+ */
 export default function Routes({ children }) {
   const { currentPath } = useRouteContext();
 
@@ -10,15 +26,13 @@ export default function Routes({ children }) {
   const routes = Children.toArray(children);
 
   // Find the route that matches the current path
-  const matchedRoute = routes.find((route) => {
-    console.log("route path", route.props.path);
-    console.log("current path", currentPath);
-    return (
+  const matchedRoute = routes.find(
+    (route) =>
       React.isValidElement(route) &&
       route.type === Route &&
       route.props.path === currentPath
-    );
-  });
+  );
 
+  // Render the matched route or an error message
   return matchedRoute ? matchedRoute.props.children : <Error />;
 }
